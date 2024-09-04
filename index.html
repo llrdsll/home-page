@@ -5,11 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Clientes</title>
-    <!-- Adicione os scripts do Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
     <style>
-         body {
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
             margin: 0;
@@ -246,70 +243,102 @@
     </div>
 
     <script>
-       const firebaseConfig = {
-  apiKey: "AIzaSyAsMqcRIsXCWqPOKI_DE-2anewZpOxbbPQ",
-  authDomain: "databasejfg-ad174.firebaseapp.com",
-  projectId: "databasejfg-ad174",
-  storageBucket: "databasejfg-ad174.appspot.com",
-  messagingSenderId: "275700013945",
-  appId: "1:275700013945:web:4a5ff4019d98d4f7d4eda8"
-};
-        // Configuração do Firebase (copie da sua conta do Firebase)
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+        // Função para carregar clientes do Local Storage
+        function loadClients() {
+            const clientsFromStorage = localStorage.getItem('clients');
+            return clientsFromStorage ? JSON.parse(clientsFromStorage) : [];
+        }
+
+        // Inicializa clientes carregando do Local Storage
+        let clients = loadClients();
+
+        // Elementos do DOM
+        const clientList = document.getElementById('clientList');
+        const clientModal = document.getElementById('clientModal');
+        const closeModal = document.getElementById('closeModal');
+        const searchBar = document.getElementById('searchBar');
+        const routeFilter = document.getElementById('routeFilter');
+        const paymentStatus = document.getElementById('paymentStatus');
+        const paymentType = document.getElementById('paymentType');
+        const route = document.getElementById('route');
+        const activeStatus = document.getElementById('activeStatus');
+        const notes = document.getElementById('notes');
+        const addClientForm = document.getElementById('addClientForm');
+        const addClientModal = document.getElementById('addClientModal');
+        const openAddClient = document.getElementById('openAddClient');
+        const closeAddClientModal = document.getElementById('closeAddClientModal');
+
+        // Renderizar a lista de clientes
+        function renderClientList(clients) {
+            clientList.innerHTML = '';
+            clients.forEach(client => {
+                const clientItem = document.createElement('div');
+                clientItem.className = client-item ${client.isActive ? 'active' : 'inactive'};
+                clientItem.textContent = client.name;
+                clientItem.onclick = () => showClientDetails(client);
+                clientList.appendChild(clientItem);
+            });
+        }
+
+        // Mostrar detalhes do cliente no popup
+        function showClientDetails(client) {
+            clientModal.style.display = 'flex';
+            paymentStatus.textContent = Status de Pagamento: ${client.status === 'bom' ? 'Bom Pagador' : 'Mal Pagador'};
+            paymentStatus.className = client.status === 'bom' ? 'status-good' : 'status-bad';
+            paymentType.textContent = Tipo de Pagamento: ${client.paymentType};
+            route.textContent = Rota: ${client.route.toUpperCase()};
+            activeStatus.textContent = Status: ${client.isActive ? 'Ativo' : 'Inativo'};
+            activeStatus.className = client.isActive ? 'status-good' : 'status-bad';
+            notes.value = client.notes;
+            notes.oninput = () => {
+                client.notes = notes.value;
+                saveClients();
+            };
+        }
+
+        // Fechar o popup de detalhes do cliente
+        closeModal.onclick = () => {
+            clientModal.style.display = 'none';
         };
 
-        // Inicialize o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(app);
+        // Filtrar clientes com base na pesquisa
+        searchBar.oninput = () => filterAndRenderClients();
 
-        // Função para carregar clientes do Firestore
-        async function loadClients() {
-            try {
-                const querySnapshot = await db.collection('clients').get();
-                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            } catch (error) {
-                console.error('Erro ao carregar clientes:', error);
-                return [];
-            }
+        // Filtrar e renderizar clientes por pesquisa e rota
+        function filterAndRenderClients() {
+            const searchTerm = searchBar.value.toLowerCase();
+            const selectedRoute = routeFilter.value;
+            const filteredClients = clients.filter(client => {
+                const matchesSearch = client.name.toLowerCase().includes(searchTerm);
+                const matchesRoute = selectedRoute === 'all' || client.route === selectedRoute;
+                return matchesSearch && matchesRoute;
+            });
+            renderClientList(filteredClients);
         }
 
-        // Função para salvar um novo cliente no Firestore
-        async function saveClient(client) {
-            try {
-                await db.collection('clients').add(client);
-            } catch (error) {
-                console.error('Erro ao salvar cliente:', error);
-            }
+        // Filtrar clientes ao alterar a rota
+        routeFilter.onchange = filterAndRenderClients;
+
+        // Salvar clientes no Local Storage
+        function saveClients() {
+            localStorage.setItem('clients', JSON.stringify(clients));
         }
 
-        // Função para atualizar as notas do cliente no Firestore
-        async function updateClientNotes(clientId, notes) {
-            try {
-                await db.collection('clients').doc(clientId).update({ notes });
-            } catch (error) {
-                console.error('Erro ao atualizar notas:', error);
-            }
-        }
+        // Abrir o modal para cadastrar novo cliente
+        openAddClient.onclick = () => {
+            addClientModal.style.display = 'flex';
+        };
 
-        // Exemplo de integração com a UI existente
-        let clients = [];
+        // Fechar o modal de cadastro de novo cliente
+        closeAddClientModal.onclick = () => {
+            addClientModal.style.display = 'none';
+        };
 
-        // Carregar e renderizar a lista de clientes
-        loadClients().then(data => {
-            clients = data;
-            renderClientList(clients);
-        });
-
-        // Modifique o evento de envio do formulário para usar o Firestore
+        // Adicionar novo cliente
         addClientForm.onsubmit = (event) => {
             event.preventDefault();
             const newClient = {
+                id: clients.length + 1,
                 name: document.getElementById('newName').value,
                 status: document.getElementById('newStatus').value,
                 paymentType: document.getElementById('newPaymentType').value,
@@ -317,11 +346,15 @@
                 isActive: document.getElementById('newActiveStatus').value === 'true',
                 notes: ''
             };
-            saveClient(newClient);
+            clients.push(newClient);
+            saveClients();
             addClientForm.reset();
             addClientModal.style.display = 'none';
-            loadClients().then(data => renderClientList(data));
+            filterAndRenderClients();
         };
+
+        // Inicializar lista de clientes
+        renderClientList(clients);
     </script>
 </body>
 </html>
