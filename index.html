@@ -355,6 +355,76 @@
 
         // Inicializar lista de clientes
         renderClientList(clients);
+
+
+
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+
+        
+        const firebaseConfig = {
+
+
+  apiKey: "AIzaSyDAtn-PSBxvJD9NJhr0nbqNH5VHK0HmKFM",
+
+
+  authDomain: "databasejfg.firebaseapp.com",
+
+
+  databaseURL: "https://databasejfg-default-rtdb.firebaseio.com",
+
+
+  projectId: "databasejfg",
+
+
+  storageBucket: "databasejfg.appspot.com",
+
+
+  messagingSenderId: "529067560909",
+
+
+  appId: "1:529067560909:web:fb078685e550ef57bc7e84"
+
+
+};
+        
+        
+        
+        
+        
+        
+        db.collection("clients").add({
+  name: newClient.name,
+  status: newClient.status,
+  paymentType: newClient.paymentType,
+  route: newClient.route,
+  isActive: newClient.isActive,
+  notes: newClient.notes
+}).then((docRef) => {
+  console.log("Client added with ID: ", docRef.id);
+}).catch((error) => {
+  console.error("Error adding client: ", error);
+});
+
+        
+        
+        db.collection("clients").get().then((querySnapshot) => {
+  querySnapshot.forEach((doc) => {
+    console.log(${doc.id} => ${doc.data()});
+    clients.push(doc.data());
+  });
+  renderClientList(clients);
+});
+
+
+
+
+
+
+
+
+
+        
     </script>
 </body>
 </html>
