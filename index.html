@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Clientes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        button#openAddClient {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            font-size: 1.5rem;
+        }
+
+        button#openAddClient:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button#openAddClient:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        #searchBar, #routeFilter {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #searchBar:focus, #routeFilter:focus {
+            border-color: #007bff;
+        }
+
+        .client-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            border-radius: 8px;
+            background: #f9fafc;
+        }
+
+        .client-item {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .client-item:hover {
+            background-color: #f1f1f1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: scale(1.01);
+        }
+
+        .client-item.active {
+            border-left: 5px solid #28a745;
+        }
+
+        .client-item.inactive {
+            border-left: 5px solid #dc3545;
+        }
+
+        /* Popup Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .status-good {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-bad {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Formulario Novo Cliente no Modal */
+        #addClientForm input, #addClientForm select {
+            margin-bottom: 10px;
+            padding: 12px;
+            width: calc(100% - 24px);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+
+        #addClientForm input:focus, #addClientForm select:focus {
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="header">
+            <button id="openAddClient">Cadastrar Novo Cliente</button>
+        </div>
+
+        <!-- Filtro de Rota -->
+        <select id="routeFilter">
+            <option value="all">Todos</option>
+            <option value="a">Rota A</option>
+            <option value="b">Rota B</option>
+            <option value="c">Rota C</option>
+            <option value="d">Rota D</option>
+            <option value="e">Rota E</option>
+            <option value="f">Rota F</option>
+        </select>
+
+        <!-- Barra de Pesquisa -->
+        <input type="text" id="searchBar" placeholder="Pesquisar cliente...">
+
+        <!-- Lista de Clientes -->
+        <div id="clientList" class="client-list"></div>
+
+        <!-- Modal de Detalhes do Cliente -->
+        <div id="clientModal" class="modal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeModal">&times;</button>
+                <h2>Detalhes do Cliente</h2>
+                <p id="paymentStatus"></p>
+                <p id="paymentType"></p>
+                <p id="route"></p>
+                <p id="activeStatus"></p>
+                <textarea id="notes" placeholder="Adicionar notas..."></textarea>
+            </div>
+        </div>
+
+        <!-- Modal para Cadastrar Novo Cliente -->
+        <div id="addClientModal" class="modal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeAddClientModal">&times;</button>
+                <h3>Cadastrar Novo Cliente</h3>
+                <form id="addClientForm">
+                    <input type="text" id="newName" placeholder="Nome do Cliente" required>
+                    <select id="newStatus">
+                        <option value="bom">Bom Pagador</option>
+                        <option value="mal">Mal Pagador</option>
+                    </select>
+                    <select id="newPaymentType">
+                        <option value="faturado">Faturado</option>
+                        <option value="à vista">À Vista</option>
+                    </select>
+                    <select id="newRoute">
+                        <option value="a">Rota A</option>
+                        <option value="b">Rota B</option>
+                        <option value="c">Rota C</option>
+                        <option value="d">Rota D</option>
+                        <option value="e">Rota E</option>
+                        <option value="f">Rota F</option>
+                    </select>
+                    <select id="newActiveStatus">
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                    <button type="submit">Cadastrar Cliente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para carregar clientes do Local Storage
+        function loadClients() {
+            const clientsFromStorage = localStorage.getItem('clients');
+            return clientsFromStorage ? JSON.parse(clientsFromStorage) : [];
+        }
+
+        // Inicializa clientes carregando do Local Storage
+        let clients = loadClients();
+
+        // Elementos do DOM
+        const clientList = document.getElementById('clientList');
+        const clientModal = document.getElementById('clientModal');
+        const closeModal = document.getElementById('closeModal');
+        const searchBar = document.getElementById('searchBar');
+        const routeFilter = document.getElementById('routeFilter');
+        const paymentStatus = document.getElementById('paymentStatus');
+        const paymentType = document.getElementById('paymentType');
+        const route = document.getElementById('route');
+        const activeStatus = document.getElementById('activeStatus');
+        const notes = document.getElementById('notes');
+        const addClientForm = document.getElementById('addClientForm');
+        const addClientModal = document.getElementById('addClientModal');
+        const openAddClient = document.getElementById('openAddClient');
+        const closeAddClientModal = document.getElementById('closeAddClientModal');
+
+        // Renderizar a lista de clientes
+        function renderClientList(clients) {
+            clientList.innerHTML = '';
+            clients.forEach(client => {
+                const clientItem = document.createElement('div');
+                clientItem.className = `client-item ${client.isActive ? 'active' : 'inactive'}`;
+                clientItem.textContent = client.name;
+                clientItem.onclick = () => showClientDetails(client);
+                clientList.appendChild(clientItem);
+            });
+        }
+
+        // Mostrar detalhes do cliente no popup
+        function showClientDetails(client) {
+            clientModal.style.display = 'flex';
+            paymentStatus.textContent = `Status de Pagamento: ${client.status === 'bom' ? 'Bom Pagador' : 'Mal Pagador'}`;
+            paymentStatus.className = client.status === 'bom' ? 'status-good' : 'status-bad';
+            paymentType.textContent = `Tipo de Pagamento: ${client.paymentType}`;
+            route.textContent = `Rota: ${client.route.toUpperCase()}`;
+            activeStatus.textContent = `Status: ${client.isActive ? 'Ativo' : 'Inativo'}`;
+            activeStatus.className = client.isActive ? 'status-good' : 'status-bad';
+            notes.value = client.notes;
+            notes.oninput = () => {
+                client.notes = notes.value;
+                saveClients();
+            };
+        }
+
+        // Fechar o popup de detalhes do cliente
+        closeModal.onclick = () => {
+            clientModal.style.display = 'none';
+        };
+
+        // Filtrar clientes com base na pesquisa
+        searchBar.oninput = () => filterAndRenderClients();
+
+        // Filtrar e renderizar clientes por pesquisa e rota
+        function filterAndRenderClients() {
+            const searchTerm = searchBar.value.toLowerCase();
+            const selectedRoute = routeFilter.value;
+            const filteredClients = clients.filter(client => {
+                const matchesSearch = client.name.toLowerCase().includes(searchTerm);
+                const matchesRoute = selectedRoute === 'all' || client.route === selectedRoute;
+                return matchesSearch && matchesRoute;
+            });
+            renderClientList(filteredClients);
+        }
+
+        // Filtrar clientes ao alterar a rota
+        routeFilter.onchange = filterAndRenderClients;
+
+        // Salvar clientes no Local Storage
+        function saveClients() {
+            localStorage.setItem('clients', JSON.stringify(clients));
+        }
+
+        // Abrir o modal para cadastrar novo cliente
+        openAddClient.onclick = () => {
+            addClientModal.style.display = 'flex';
+        };
+
+        // Fechar o modal de cadastro de novo cliente
+        closeAddClientModal.onclick = () => {
+            addClientModal.style.display = 'none';
+        };
+
+        // Adicionar novo cliente
+        addClientForm.onsubmit = (event) => {
+            event.preventDefault();
+            const newClient = {
+                id: clients.length + 1,
+                name: document.getElementById('newName').value,
+                status: document.getElementById('newStatus').value,
+                paymentType: document.getElementById('newPaymentType').value,
+                route: document.getElementById('newRoute').value,
+                isActive: document.getElementById('newActiveStatus').value === 'true',
+                notes: ''
+            };
+            clients.push(newClient);
+            saveClients();
+            addClientForm.reset();
+            addClientModal.style.display = 'none';
+            filterAndRenderClients();
+        };
+
+        // Inicializar lista de clientes
+        renderClientList(clients);
+    </script>
+</body>
+</html>
