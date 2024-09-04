@@ -240,200 +240,138 @@
                 </form>
             </div>
         </div>
+
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+        
+        <!-- Initialize Firebase -->
+        <script>
+            const firebaseConfig = {
+                apiKey: "AIzaSyDAtn-PSBxvJD9NJhr0nbqNH5VHK0HmKFM",
+                authDomain: "databasejfg.firebaseapp.com",
+                databaseURL: "https://databasejfg-default-rtdb.firebaseio.com",
+                projectId: "databasejfg",
+                storageBucket: "databasejfg.appspot.com",
+                messagingSenderId: "529067560909",
+                appId: "1:529067560909:web:fb078685e550ef57bc7e84"
+            };
+
+            // Initialize Firebase
+            const app = firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+        </script>
+
+        <!-- Application Script -->
+        <script>
+            // Element references
+            const clientList = document.getElementById('clientList');
+            const clientModal = document.getElementById('clientModal');
+            const closeModal = document.getElementById('closeModal');
+            const searchBar = document.getElementById('searchBar');
+            const routeFilter = document.getElementById('routeFilter');
+            const paymentStatus = document.getElementById('paymentStatus');
+            const paymentType = document.getElementById('paymentType');
+            const route = document.getElementById('route');
+            const activeStatus = document.getElementById('activeStatus');
+            const notes = document.getElementById('notes');
+            const addClientForm = document.getElementById('addClientForm');
+            const addClientModal = document.getElementById('addClientModal');
+            const openAddClient = document.getElementById('openAddClient');
+            const closeAddClientModal = document.getElementById('closeAddClientModal');
+
+            // Load clients from Firebase Firestore
+            let clients = [];
+
+            function loadClients() {
+                db.collection("clients").get().then(querySnapshot => {
+                    clients = [];
+                    querySnapshot.forEach(doc => {
+                        clients.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderClientList(clients);
+                });
+            }
+
+            // Render client list
+            function renderClientList(clients) {
+                clientList.innerHTML = '';
+                clients.forEach(client => {
+                    const clientItem = document.createElement('div');
+                    clientItem.className = client-item ${client.isActive ? 'active' : 'inactive'};
+                    clientItem.textContent = client.name;
+                    clientItem.onclick = () => showClientDetails(client);
+                    clientList.appendChild(clientItem);
+                });
+            }
+
+            // Show client details in a modal
+            function showClientDetails(client) {
+                clientModal.style.display = 'flex';
+                paymentStatus.textContent = Status de Pagamento: ${client.status === 'bom' ? 'Bom Pagador' : 'Mal Pagador'};
+                paymentStatus.className = client.status === 'bom' ? 'status-good' : 'status-bad';
+                paymentType.textContent = Tipo de Pagamento: ${client.paymentType};
+                route.textContent = Rota: ${client.route.toUpperCase()};
+                activeStatus.textContent = Status: ${client.isActive ? 'Ativo' : 'Inativo'};
+                activeStatus.className = client.isActive ? 'status-good' : 'status-bad';
+                notes.value = client.notes || '';
+                notes.oninput = () => {
+                    db.collection('clients').doc(client.id).update({ notes: notes.value });
+                };
+            }
+
+            // Close the client details modal
+            closeModal.onclick = () => {
+                clientModal.style.display = 'none';
+            };
+
+            // Filter and search clients
+            function filterAndRenderClients() {
+                const searchTerm = searchBar.value.toLowerCase();
+                const selectedRoute = routeFilter.value;
+                const filteredClients = clients.filter(client => {
+                    const matchesSearch = client.name.toLowerCase().includes(searchTerm);
+                    const matchesRoute = selectedRoute === 'all' || client.route === selectedRoute;
+                    return matchesSearch && matchesRoute;
+                });
+                renderClientList(filteredClients);
+            }
+
+            // Filter clients on search and route filter change
+            searchBar.oninput = filterAndRenderClients;
+            routeFilter.onchange = filterAndRenderClients;
+
+            // Open modal to add new client
+            openAddClient.onclick = () => {
+                addClientModal.style.display = 'flex';
+            };
+
+            // Close the add client modal
+            closeAddClientModal.onclick = () => {
+                addClientModal.style.display = 'none';
+            };
+
+            // Add new client to Firebase Firestore
+            addClientForm.onsubmit = (event) => {
+                event.preventDefault();
+                const newClient = {
+                    name: document.getElementById('newName').value,
+                    status: document.getElementById('newStatus').value,
+                    paymentType: document.getElementById('newPaymentType').value,
+                    route: document.getElementById('newRoute').value,
+                    isActive: document.getElementById('newActiveStatus').value === 'true',
+                    notes: ''
+                };
+
+                db.collection('clients').add(newClient).then(() => {
+                    addClientModal.style.display = 'none';
+                    loadClients();
+                });
+            };
+
+            // Load initial client list
+            loadClients();
+        </script>
     </div>
-
-
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
-
-    <script>
-        // Função para carregar clientes do Local Storage
-        function loadClients() {
-            const clientsFromStorage = localStorage.getItem('clients');
-            return clientsFromStorage ? JSON.parse(clientsFromStorage) : [];
-        }
-
-        // Inicializa clientes carregando do Local Storage
-        let clients = loadClients();
-
-        // Elementos do DOM
-        const clientList = document.getElementById('clientList');
-        const clientModal = document.getElementById('clientModal');
-        const closeModal = document.getElementById('closeModal');
-        const searchBar = document.getElementById('searchBar');
-        const routeFilter = document.getElementById('routeFilter');
-        const paymentStatus = document.getElementById('paymentStatus');
-        const paymentType = document.getElementById('paymentType');
-        const route = document.getElementById('route');
-        const activeStatus = document.getElementById('activeStatus');
-        const notes = document.getElementById('notes');
-        const addClientForm = document.getElementById('addClientForm');
-        const addClientModal = document.getElementById('addClientModal');
-        const openAddClient = document.getElementById('openAddClient');
-        const closeAddClientModal = document.getElementById('closeAddClientModal');
-
-        // Renderizar a lista de clientes
-        function renderClientList(clients) {
-            clientList.innerHTML = '';
-            clients.forEach(client => {
-                const clientItem = document.createElement('div');
-                clientItem.className = `client-item ${client.isActive ? 'active' : 'inactive'}`;
-                clientItem.textContent = client.name;
-                clientItem.onclick = () => showClientDetails(client);
-                clientList.appendChild(clientItem);
-            });
-        }
-
-        // Mostrar detalhes do cliente no popup
-        function showClientDetails(client) {
-            clientModal.style.display = 'flex';
-            paymentStatus.textContent = `Status de Pagamento: ${client.status === 'bom' ? 'Bom Pagador' : 'Mal Pagador'}`;
-            paymentStatus.className = client.status === 'bom' ? 'status-good' : 'status-bad';
-            paymentType.textContent = `Tipo de Pagamento: ${client.paymentType}`;
-            route.textContent = `Rota: ${client.route.toUpperCase()}`;
-            activeStatus.textContent = `Status: ${client.isActive ? 'Ativo' : 'Inativo'}`;
-            activeStatus.className = client.isActive ? 'status-good' : 'status-bad';
-            notes.value = client.notes;
-            notes.oninput = () => {
-                client.notes = notes.value;
-                saveClients();
-            };
-        }
-
-        // Fechar o popup de detalhes do cliente
-        closeModal.onclick = () => {
-            clientModal.style.display = 'none';
-        };
-
-        // Filtrar clientes com base na pesquisa
-        searchBar.oninput = () => filterAndRenderClients();
-
-        // Filtrar e renderizar clientes por pesquisa e rota
-        function filterAndRenderClients() {
-            const searchTerm = searchBar.value.toLowerCase();
-            const selectedRoute = routeFilter.value;
-            const filteredClients = clients.filter(client => {
-                const matchesSearch = client.name.toLowerCase().includes(searchTerm);
-                const matchesRoute = selectedRoute === 'all' || client.route === selectedRoute;
-                return matchesSearch && matchesRoute;
-            });
-            renderClientList(filteredClients);
-        }
-
-        // Filtrar clientes ao alterar a rota
-        routeFilter.onchange = filterAndRenderClients;
-
-        // Salvar clientes no Local Storage
-        function saveClients() {
-            localStorage.setItem('clients', JSON.stringify(clients));
-        }
-
-        // Abrir o modal para cadastrar novo cliente
-        openAddClient.onclick = () => {
-            addClientModal.style.display = 'flex';
-        };
-
-        // Fechar o modal de cadastro de novo cliente
-        closeAddClientModal.onclick = () => {
-            addClientModal.style.display = 'none';
-        };
-
-        // Adicionar novo cliente
-        addClientForm.onsubmit = (event) => {
-            event.preventDefault();
-            const newClient = {
-                id: clients.length + 1,
-                name: document.getElementById('newName').value,
-                status: document.getElementById('newStatus').value,
-                paymentType: document.getElementById('newPaymentType').value,
-                route: document.getElementById('newRoute').value,
-                isActive: document.getElementById('newActiveStatus').value === 'true',
-                notes: ''
-            };
-            clients.push(newClient);
-            saveClients();
-            addClientForm.reset();
-            addClientModal.style.display = 'none';
-            filterAndRenderClients();
-        };
-
-        // Inicializar lista de clientes
-        renderClientList(clients);
-
-
-
-
-
-
-
-
-        
-
-
-        
-        const firebaseConfig = {
-
-
-  apiKey: "AIzaSyDAtn-PSBxvJD9NJhr0nbqNH5VHK0HmKFM",
-
-
-  authDomain: "databasejfg.firebaseapp.com",
-
-
-  databaseURL: "https://databasejfg-default-rtdb.firebaseio.com",
-
-
-  projectId: "databasejfg",
-
-
-  storageBucket: "databasejfg.appspot.com",
-
-
-  messagingSenderId: "529067560909",
-
-
-  appId: "1:529067560909:web:fb078685e550ef57bc7e84"
-
-
-};
-        
-        
-        
-        
-        
-        
-        db.collection("clients").add({
-  name: newClient.name,
-  status: newClient.status,
-  paymentType: newClient.paymentType,
-  route: newClient.route,
-  isActive: newClient.isActive,
-  notes: newClient.notes
-}).then((docRef) => {
-  console.log("Client added with ID: ", docRef.id);
-}).catch((error) => {
-  console.error("Error adding client: ", error);
-});
-
-        
-        
-        db.collection("clients").get().then((querySnapshot) => {
-  querySnapshot.forEach((doc) => {
-    console.log(${doc.id} => ${doc.data()});
-    clients.push(doc.data());
-  });
-  renderClientList(clients);
-});
-
-
-
-
-
-
-
-
-
-        
-    </script>
 </body>
 </html>
