@@ -117,58 +117,24 @@
 
 <script>
 /* =========================
-   CONFIGURAÇÕES
+   OLOCO BIXO
    ========================= */
-const LOCAL_PRODUCT_IMAGES = {
-  'a1': '1.png',
-  'b1': '2.png',
-  'c1': '3.png',
-  'd1': '4.png',
-  'e1': '5.png',
-  'ff1': '6.png',
-  'g1': '7.png',
-  'h1': '8.png',
-  'i1': '9.png',
-  'j1': '10.png',
-  'k1': '11.png',
-  'l1': '12.png',
-  'm1': '13.png',
-  'n1': '14.png',
-  'o1': '15.png',
-  'p1': '16.png',
-  'q1': '17.png',
-  'r1': '18.png',
-  's1': '19.png',
-  't1': '20.png',
-  'u1': '21.png',
-  'v1': '22.png',
-  'w1': '23.png',
-  'x1': '24.png',
-  'y1': '25.png',
-  'z1': '26.png',
-  'a2': '27.png',
-  'b2': '28.png',
-  'c2': '29.png',
-  'd2': '30.png',
-  'e2': '31.png',
-  'f2': '32.png',
-};
+
 const EMAILJS_ENABLED = false;
 const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
 const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
 const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
 
 /* =========================
-   Dados (agora com tamanhos e preços)
+   Dados (com tamanhos e preços)
    ========================= */
 const PHONE_RAW = '11974177315';
 const WA_NUMBER = (function(){ const d = String(PHONE_RAW).replace(/\D/g,''); return d.startsWith('55') ? d : '55'+d; })();
 
 const products = [
   {
-    id: 'a1',
     title: 'Mão Francesa Normal 20x40',
-    img: './1.png',
+    img: '1.png',
     sizes: [
       { name: '10cm', price: 13.11 },
       { name: '15cm', price: 13.64 },
@@ -188,18 +154,16 @@ const products = [
     ]
   },
   {
-    id: 'j1',
     title: 'Bucha Fischer SX',
-    img: LOCAL_PRODUCT_IMAGES['a1'] || 'https://source.unsplash.com/800x600/?screw,bolt',
+    img: '10.png',
     sizes: [
       { name: '10mm', price: 0.94 },
       { name: '8mm', price: 0.59 }
     ]
   },
   {
-    id: 'h1',
     title: 'Parafuso Sextavado',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '8.png',
     sizes: [
       { name: '1/4x50', price: 0.70 },
       { name: '1/4x60', price: 0.59 },
@@ -216,9 +180,8 @@ const products = [
     ]
   },
   {
-    id: 'd1',
     title: 'MF Cantoneira 1.1/4 x 1/8 (Média)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '4.png',
     sizes: [
       { name: '14cm', price: 16.25 },
       { name: '16cm', price: 16.56 },
@@ -235,9 +198,8 @@ const products = [
     ]
   },
   {
-    id: 'd111',
     title: 'MF Cantoneira 1.1/2 x 1/8 (Média)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '25.png',
     sizes: [
       { name: '14cm', price: 17.20 },
       { name: '16cm', price: 17.58 },
@@ -257,9 +219,8 @@ const products = [
     ]
   },
   {
-    id: 'z1',
     title: 'Grapa Tubo 1.1/4 (Leve)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '26.png',
     sizes: [
       { name: '32cm', price: 12.96 },
       { name: '42cm', price: 13.99 },
@@ -273,9 +234,8 @@ const products = [
     ]
   },
   {
-    id: 'z1',
     title: 'Grapa Tubo 32mm (Pesada)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '26.png',
     sizes: [
       { name: '50cm', price: 18.85 },
       { name: '52cm', price: 19.18 },
@@ -288,9 +248,8 @@ const products = [
     ]
   },
   {
-    id: 'z1',
     title: 'Grapa Tubo 38mm (Pesada)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '26.png',
     sizes: [
       { name: '50cm', price: 49.13 },
       { name: '52cm', price: 50.13 },
@@ -303,9 +262,8 @@ const products = [
     ]
   },
   {
-    id: 'e1',
     title: 'Massa Plástica 800g',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '5.png',
     sizes: [
       { name: 'Branca', price: 13.00 },
       { name: 'Chumbar', price: 13.00 },
@@ -315,66 +273,58 @@ const products = [
     ]
   },
   {
-    id: 'g1',
     title: 'Cola P.U',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '7.png',
     sizes: [
       { name: 'Branco', price: 15.99 },
       { name: 'Preto', price: 15.99 }
     ]
   },
   {
-    id: 'i1',
     title: 'Bucha Duo Power',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '9.png',
     sizes: [
       { name: '10mm', price: 1.29 }
     ]
   },
   {
-    id: 'k1',
     title: 'IV PLAST TJ Baiano',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '11.png',
     sizes: [
       { name: '10mm', price: 0.30 }
     ]
   },
   {
-    id: 'a2',
     title: 'Suporte Varal de Teto',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '27.png',
     sizes: [
       { name: 'Regulagem', price: 25.03 }
     ]
   },
   {
-    id: 'b2',
     title: 'Cavalete de Regulagem ',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '28.png',
     sizes: [
       { name: 'Tubo', price: 420.00 }
     ]
   },
   {
-    id: 'c2',
     title: 'Cavalete de Abrir e Fechar',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '29.png',
     sizes: [
       { name: 'Tubo', price: 168.00 }
     ]
   },
   {
-    id: 'd2',
     title: 'Cavalete de Cantoneira ',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '0.png',
     sizes: [
       { name: 'Cantoneira', price: 330.00 }
     ]
   },
   {
-    id: 'n1',
     title: 'Bucha IV Plast',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '14.png',
     sizes: [
       { name: '8mm', price: 0.10 },
       { name: '10mm', price: 0.20 },
@@ -382,76 +332,67 @@ const products = [
     ]
   },
   {
-    id: 'l1',
     title: 'Bucha New Fix Plast',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '12.png',
     sizes: [
       { name: '10mm', price: 0.30 }
     ]
   },
   {
-    id: 'm1',
     title: 'Bucha Fischer UX',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '13.png',
     sizes: [
       { name: '10mm', price: 0.73 }
     ]
   },
   {
-    id: 'o1',
     title: 'Bucha Argevision',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '15.png',
     sizes: [
       { name: '10mm', price: 1.29 }
     ]
   },
   {
-    id: 'p1',
     title: 'Bucha MX Nylon 10',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '16.png',
     sizes: [
       { name: '10mm', price: 1.29 }
     ]
   },
   {
-    id: 'q1',
     title: 'Chumbador Parabolt',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '17.png',
     sizes: [
       { name: '1/4x2', price: 1.59 },
       { name: '5/16x2.1/4', price: 2.22 }
     ]
   },
   {
-    id: 'r1',
     title: 'Chumbador Ancora',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '18.png',
     sizes: [
       { name: '1/4x2', price: 1.89 },
       { name: '1/4x3', price: 2.22 }
     ]
   },
   {
-    id: 's1',
     title: 'Kit Drywall',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '19.png',
     sizes: [
       { name: '1/4', price: 5.03 },
       { name: '3/16', price: 4.98 }
     ]
   },
   {
-    id: 't1',
     title: 'Bucha MU 10',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '20.png',
     sizes: [
       { name: '10mm', price: 1.29 }
     ]
   },
   {
-    id: 'u1',
     title: 'Cantoneiras 38m',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '21.png',
     sizes: [
       { name: '05cm', price: 16.25 },
       { name: '10cm', price: 16.56 },
@@ -470,9 +411,8 @@ const products = [
     ]
   },
   {
-    id: 'u111',
     title: 'Cantoneira 32mm',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '21.png',
     sizes: [
       { name: '10cm', price: 6.77 },
       { name: '20cm', price: 8.29 },
@@ -485,9 +425,8 @@ const products = [
     ]
   },
   {
-    id: 'v1',
     title: 'MF. Ferro Chato 5/16 x 1.1/4 (Grosso)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '22.png',
     sizes: [
       { name: '45cm', price: 24.43 },
       { name: '50cm', price: 25.44 },
@@ -496,9 +435,8 @@ const products = [
     ]
   },
   {
-    id: 'v111',
     title: 'MF. Ferro Chato 3x16 x 1.1/4 (Médio)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '22.png',
     sizes: [
       { name: '40cm', price: 21.79 },
       { name: '45cm', price: 22.65 },
@@ -507,9 +445,8 @@ const products = [
     ]
   },
   {
-    id: 'v111111',
     title: 'MF. Ferro Chato 1/8 x 1.1/4 (Fino)',
-    img: LOCAL_PRODUCT_IMAGES['c1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    img: '22.png',
     sizes: [
       { name: '40cm', price: 19.29 },
       { name: '45cm', price: 20.00 },
@@ -517,10 +454,9 @@ const products = [
       { name: '55cm', price: 21.83 }
     ]
   },
-  {
-    id: 'b1',
-    title: ' ̶G̶r̶a̶p̶a̶s̶ ̶P̶e̶r̶f̶i̶l̶ ̶T̶ (esgotado)',
-    img: './2.png',
+  { 
+   title: ' ̶G̶r̶a̶p̶a̶s̶ ̶P̶e̶r̶f̶i̶l̶ ̶T̶ (esgotado)',
+    img: '2.png',
     sizes: [
       { name: '05cm', price: 0.00 },
       { name: '10cm', price: 0.00 },
@@ -541,9 +477,8 @@ const products = [
     ]
   },
   {
-    id: 'w1',
     title: ' ̶M̶F̶.̶ ̶P̶e̶r̶f̶i̶l̶ ̶T̶ ̶1̶.̶1̶/̶4̶ ̶(̶M̶é̶d̶i̶o̶)̶ (esgotado)',
-    img: LOCAL_PRODUCT_IMAGES['g1'] || 'https://source.unsplash.com/800x600/?product,tool',
+    img: '23.png',
     sizes: [
       { name: '20cm', price: 0.00 },
       { name: '25cm', price: 0.00 },
@@ -560,9 +495,8 @@ const products = [
     ]
   },
   {
-    id: 'g1',
     title: 'Viga U para divisórias 28x28x28mm',
-    img: LOCAL_PRODUCT_IMAGES['g1'] || 'https://source.unsplash.com/800x600/?product,tool',
+    img: '999.png',
     sizes: [
       { name: '10cm', price: 10.58 },
       { name: '20cm', price: 12.24 },
@@ -577,9 +511,8 @@ const products = [
     ]
   },
   {
-    id: 'x1',
     title: 'Grapa Quadrada 20x20 (Leve)',
-    img: LOCAL_PRODUCT_IMAGES['g1'] || 'https://source.unsplash.com/800x600/?product,tool',
+    img: '24.png',
     sizes: [
       { name: '25cm', price: 13.77 },
       { name: '30cm', price: 14.16 },
@@ -595,9 +528,8 @@ const products = [
     ]
   },
   {
-    id: 'x1',
     title: 'Grapa Quadrada 50x30 (Pesada)',
-    img: LOCAL_PRODUCT_IMAGES['g1'] || 'https://source.unsplash.com/800x600/?product,tool',
+    img: '24.png',
     sizes: [
       { name: '60cm', price: 26.64 },
       { name: '65cm', price: 28.01 },
@@ -610,9 +542,8 @@ const products = [
     ]
   },
   {
-    id: 'x1',
     title: 'Grapa Quadrada 40x40 (Pesada)',
-    img: LOCAL_PRODUCT_IMAGES['g1'] || 'https://source.unsplash.com/800x600/?product,tool',
+    img: '24.png',
     sizes: [
       { name: '60cm', price: 27.64 },
       { name: '65cm', price: 29.05 },
@@ -625,9 +556,8 @@ const products = [
     ]
   },
   {
-    id: 'g1',
     title: ' ̶M̶F̶.̶ ̶P̶e̶r̶f̶i̶l̶ ̶T̶ ̶1̶.̶1̶/̶2̶ ̶(̶G̶r̶o̶s̶s̶o̶)̶ (esgotado)',
-    img: LOCAL_PRODUCT_IMAGES['g1'] || 'https://source.unsplash.com/800x600/?product,tool',
+    img: '23.png',
     sizes: [
       { name: '40cm', price: 0.00 },
       { name: '45cm', price: 0.00 },
@@ -640,9 +570,8 @@ const products = [
     ]
   },
   {
-  id: 'c1',
     title: 'Grade Boca de Lobo',
-    img: './2.png',
+    img: '3.png',
     sizes: [
       { name: 'Personalizado', price: 0.00 }
     ]
