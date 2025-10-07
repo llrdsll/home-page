@@ -733,9 +733,7 @@ function renderSobre(){
           <li>**Preços Competitivos:** Nossa operação direta garante os melhores preços do mercado.</li>
           <li>**Atendimento ao Cliente:** Nossa equipe está sempre pronta para ajudar a encontrar a solução ideal.</li>
         </ul>
-        <div style="margin-top:30px;text-align:center">
-          <a href="#/loja" class="btn btn-primary" style="text-decoration:none">Conheça Nossos Produtos</a>
-        </div>
+        
       </div>
     </section>
   `;
@@ -772,6 +770,9 @@ function renderTrabalhe(){
   } else {
      document.getElementById('contactForm').innerHTML = `
         <p class="center" style="font-weight:700">O envio do formulário está desativado (EmailJS). Para se candidatar, entre em contato pelo WhatsApp: ${WA_NUMBER}.</p>
+    <div style="margin-top:30px;text-align:center">
+          <a href="#/loja" class="btn btn-primary" style="text-decoration:none">Conheça Nossos Produtos</a>
+        </div>
      `;
   }
 }
