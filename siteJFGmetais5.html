@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Loja de Ferragens — Demo</title>
+<style>
+  :root{
+    --orange:#F97316;
+    --bg:#f7fafc;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --input-border: #d1d5db; /* Nova variável para borda suave */
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:#111827;line-height:1.45;-webkit-font-smoothing:antialiased}
+  .container{max-width:1100px;margin:0 auto;padding:20px}
+  header{background:#fff;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);position:sticky;top:0;z-index:60}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;cursor:pointer}
+  .logo{width:44px;height:44px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+  .brand-block{display:flex;flex-direction:column}
+  .brand-block .title{font-weight:700}
+  .brand-block .subtitle{font-size:12px;color:var(--muted);overflow:hidden;white-space:nowrap}
+  nav{display:flex;align-items:center;gap:14px}
+  nav a{text-decoration:none;color:inherit;font-weight:600;cursor:pointer;padding:6px 8px;border-radius:8px}
+  nav a.active{color:var(--orange);background:rgba(249,115,22,0.06)}
+  main{padding:20px 0 120px}
+  .hero{background:linear-gradient(180deg,#fffaf0,#fff);border-radius:12px;padding:36px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+  .hero img{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+  .cta-group{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:10px 16px;border-radius:12px;border:1px solid transparent;cursor:pointer;font-weight:600}
+  .btn-primary{background:var(--orange);color:#fff}
+  .btn-outline{background:#fff;border:1px solid var(--orange);color:var(--orange)}
+  .small{font-size:13px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 14px rgba(2,6,23,0.03);display:flex;flex-direction:column}
+  .card img{width:100%;height:160px;object-fit:cover;border-radius:8px}
+  .card .price{color:var(--orange);font-weight:700;margin-top:8px}
+  .card .actions{margin-top:auto;display:flex;gap:8px}
+  .faq-item{border-bottom:1px solid #efefef;padding:10px 0;display:flex;flex-direction:column}
+  .faq-q{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:600}
+  .faq-a{margin-top:8px;color:var(--muted);display:none}
+  .faq-a.open{display:block}
+  .cart-btn{position:fixed;right:18px;bottom:18px;background:#fff;border-radius:28px;padding:10px 14px;box-shadow:0 10px 30px rgba(2,6,23,0.12);display:flex;align-items:center;gap:10px;z-index:80;cursor:pointer}
+  .cart-badge{background:var(--orange);color:#fff;border-radius:999px;padding:4px 8px;font-size:13px}
+  .cart-panel{position:fixed;right:18px;bottom:76px;width:380px;max-width:94vw;background:#fff;border-radius:12px;padding:14px;box-shadow:0 18px 40px rgba(2,6,23,0.18);z-index:80}
+  .cart-item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed #f1f1f1}
+  .cart-item img{width:56px;height:56px;object-fit:cover;border-radius:8px}
+  .cart-actions{display:flex;gap:8px;margin-top:12px}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:90}
+  .modal{background:#fff;padding:18px;border-radius:12px;max-width:820px;width:94%;display:flex;gap:18px}
+  .modal img{width:260px;height:260px;object-fit:cover;border-radius:10px}
+  input[type="number"]{width:78px;padding:8px;border-radius:8px;border:1px solid #e6e6e6}
+  select, input[type="file"], input[type="text"], textarea{padding:8px;border-radius:8px;border:1px solid #e6e6e6}
+  footer{text-align:center;padding:20px;color:var(--muted);font-size:14px}
+  .marquee{overflow:hidden;white-space:nowrap;display:inline-block}
+  .marquee span{display:inline-block;padding-left:100%;animation:marq 12s linear infinite}
+  @keyframes marq{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+  .qty-control{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .qty-btn{background:var(--orange);color:#fff;border:none;border-radius:8px;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;box-shadow:0 6px 14px rgba(249,115,22,0.12);transition:transform .12s}
+  .qty-btn:active{transform:scale(.96)}
+  .qty-number{min-width:36px;text-align:center;font-weight:700;padding:6px 10px;border-radius:8px;background:#f3f4f6}
+  .remove-ghost{background:transparent;border:none;color:#ef4444;cursor:pointer;padding:6px 8px;border-radius:8px;font-weight:600}
+  
+  /* ESTILOS MODERNOS REFORÇADOS PARA PESQUISA E FILTRO */
+  .shop-controls{
+    display:flex;
+    gap:16px; 
+    margin:20px 0 30px; 
+    align-items:center;
+    flex-wrap:wrap;
+    background: var(--card); 
+    padding: 12px 20px; /* Mais fino */
+    border-radius: 12px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 10px 15px -3px rgba(0,0,0,0.01); /* Sutilmente elevado */
+    border: 1px solid #e5e7eb; /* Borda suave */
+  }
+  
+  .search-container{
+    flex:1;
+    position:relative;
+    min-width:200px;
+    height: 44px; /* Altura fixa para alinhar */
+  }
+  
+  .search-container input[type="text"]{
+    width:100%;
+    height:100%;
+    border:1px solid var(--input-border);
+    padding:10px 15px 10px 40px; 
+    border-radius: 999px; 
+    font-size:16px;
+    background: var(--bg); /* Fundo sutilmente cinza */
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .search-container input[type="text"]:focus{
+    border-color: var(--orange); /* Foco simples e limpo */
+    box-shadow: none; 
+    outline: none;
+  }
+  
+  .search-icon{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#4b5563; /* Ícone mais escuro */
+    pointer-events: none; /* Não impede o clique no input */
+  }
+  
+  /* Estilizando o Select para parecer um Botão/Filtro */
+  .shop-controls select{
+    -webkit-appearance: none; /* Remove estilo nativo Chrome/Safari */
+    -moz-appearance: none;    /* Remove estilo nativo Firefox */
+    appearance: none;         /* Remove estilo nativo */
+    padding:10px 16px;
+    border:1px solid var(--input-border);
+    border-radius: 999px; 
+    font-size:16px;
+    background:var(--card); /* Fundo branco */
+    cursor:pointer;
+    font-weight: 600;
+    color: #1f2937;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px; /* Espaço para a seta */
+    transition: border-color 0.2s;
+  }
+
+  .shop-controls select:hover{
+    border-color: var(--orange);
+  }
+
+  /* mobile nav / hamburger */
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border-radius:8px}
+  .hamburger span{width:26px;height:3px;background:var(--orange);border-radius:2px;transition:.3s}
+  .hamburger.active span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+  .hamburger.active span:nth-child(2){opacity:0}
+  .hamburger.active span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+  .mobile-nav{display:none;flex-direction:column;background:#fff;position:fixed;top:68px;left:10px;right:10px;padding:12px 16px;box-shadow:0 6px 18px rgba(0,0,0,0.08);z-index:70;border-radius:12px}
+  .mobile-nav a{padding:12px 8px;border-bottom:1px solid #f3f4f6;text-decoration:none;color:#111827;font-weight:700}
+  .mobile-nav a:last-child{border-bottom:none}
+  .mobile-nav.open{display:flex}
+  /* responsive grid */
+  @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:620px){
+    .grid{grid-template-columns:1fr}
+    header{padding:12px}
+    .hero img{width:96px;height:96px}
+    .modal{flex-direction:column;align-items:center}
+    .cart-panel{right:12px;left:12px;width:auto}
+  }
+  @media (max-width:768px){
+    nav{display:none}
+    .hamburger{display:flex}
+    /* No mobile, empilha os controles, mas mantém a largura total */
+    .shop-controls{flex-direction:column;align-items:stretch;padding:12px;gap:10px;}
+    .shop-controls select{width:100%;}
+    .search-container{width:100%; min-width:unset;}
+  }
+  /* small helpers */
+  .muted{color:var(--muted)}
+  .row{display:flex;gap:12px;align-items:center}
+  .space{flex:1}
+  .center{text-align:center}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:0">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="brand" id="home-link" title="Home">
+        <img id="logo-img" src="logo.jpeg" alt="logo" style="width:44px;height:44px;border-radius:50%;object-fit:cover;display:block"
+             onerror="this.style.display='none';document.querySelector('.logo').style.display='flex'">
+        <div class="logo" style="display:none">A</div>
+        <div class="brand-block">
+          <div class="title">JFG Metais </div>
+          <div class="subtitle"><span class="marquee"><span>Aqui Temos • Suportes de Fixação • Direto da Fábrica</span></span></div>
+        </div>
+      </div>
+    </div>
+    <nav id="desktopNav">
+      <a href="#/" class="nav-link" data-route="/">Home</a>
+      <a href="#/loja" class="nav-link" data-route="/loja">Loja</a>
+      <a href="#/blog" class="nav-link" data-route="/blog">Blog</a>
+      <a href="#/sobre" class="nav-link" data-route="/sobre">Sobre</a>
+      <a href="#/trabalhe" class="nav-link" data-route="/trabalhe">Trabalhe conosco</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="hamburger" id="hamburger" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+    <a href="#/" class="nav-link" data-route="/">Home</a>
+    <a href="#/loja" class="nav-link" data-route="/loja">Loja</a>
+    <a href="#/blog" class="nav-link" data-route="/blog">Blog</a>
+    <a href="#/sobre" class="nav-link" data-route="/sobre">Sobre</a>
+    <a href="#/trabalhe" class="nav-link" data-route="/trabalhe">Trabalhe conosco</a>
+  </div>
+</header>
+<main class="container" id="app"></main>
+<button id="cart-btn" class="cart-btn" aria-label="Abrir carrinho" title="Abrir carrinho">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M3 3h2l.4 2M7 13h10l4-8H5.4" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div style="text-align:left">
+    <div style="font-weight:700">Carrinho</div>
+    <div class="small" id="cart-summary">0 itens — R$ 0,00</div>
+  </div>
+  <div class="cart-badge" id="cart-count">0</div>
+</button>
+<div id="overlays"></div>
+<footer>© <span id="year"></span> JFG — criado com carinho por @andre</footer>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+/* =========================
+   CONFIGURAÇÕES E DADOS
+   ========================= */
+const PHONE_RAW = '11974177315'; // seu número (sem +). Já existente no seu código.
+const WA_NUMBER = (function(){ const d = String(PHONE_RAW).replace(/\D/g,''); return d.startsWith('55') ? d : '55'+d; })();
+const EMAILJS_ENABLED = false;
+const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+const LOCAL_PRODUCT_IMAGES = {
+  'a1': '1.png','b1': '2.png','c1': '3.png','d1':'4.png','e1':'5.png','ff1':'6.png',
+  'g1':'7.png','h1':'8.png','i1':'9.png','j1':'10.png','k1':'11.png','l1':'12.png',
+  'm1':'13.png','n1':'14.png','o1':'15.png','p1':'16.png','q1':'17.png','r1':'18.png',
+  's1':'19.png','t1':'20.png','u1':'21.png','v1':'22.png','w1':'23.png','x1':'24.png',
+  'y1':'25.png','z1':'26.png','a2':'27.png','b2':'28.png','c2':'29.png','d2':'30.png'
+};
+
+/* =========================
+   Produtos (exemplo estendido)
+   ADICIONEI O CAMPO 'category' PARA FILTRAGEM
+   ========================= */
+const products = [
+  {
+    id: 'a1',
+    title: 'Mão Francesa Normal 20x40',
+    category: 'Mão Francesa',
+    img: LOCAL_PRODUCT_IMAGES['a1'] || 'https://source.unsplash.com/800x600/?bracket,shelf',
+    sizes: [
+      { name: '10cm', price: 13.11 },
+      { name: '15cm', price: 13.64 },
+      { name: '20cm', price: 14.39 },
+      { name: '25cm', price: 14.95 },
+      { name: '30cm', price: 15.51 },
+      { name: '35cm', price: 16.07 },
+      { name: '40cm', price: 16.65 },
+      { name: '45cm', price: 17.18 },
+      { name: '50cm', price: 17.77 },
+      { name: '55cm', price: 18.33 },
+      { name: '60cm', price: 18.97 },
+      { name: '65cm', price: 19.60 },
+      { name: '70cm', price: 20.23 },
+      { name: '80cm', price: 21.60 },
+      { name: '90cm', price: 22.87 }
+    ]
+  },
+  {
+    id: 'd1',
+    title: 'MF Cantoneira 1.1/4 x 1/8 (Média)',
+    category: 'Mão Francesa',
+    img: LOCAL_PRODUCT_IMAGES['d1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '14cm', price: 16.25 },
+      { name: '16cm', price: 16.56 },
+      { name: '25cm', price: 19.81 },
+      { name: '30cm', price: 20.97 },
+      { name: '35cm', price: 21.62 },
+      { name: '40cm', price: 22.49 },
+      { name: '45cm', price: 23.15 },
+      { name: '50cm', price: 24.01 },
+      { name: '55cm', price: 24.77 },
+      { name: '60cm', price: 25.53 },
+      { name: '65cm', price: 26.29 },
+      { name: '70cm', price: 27.06 }
+    ]
+  },
+  {
+    id: 'd1_2',
+    title: 'MF Cantoneira 1.1/2 x 1/8 (Média)',
+    category: 'Mão Francesa',
+    img: LOCAL_PRODUCT_IMAGES['d1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '14cm', price: 17.20 },
+      { name: '16cm', price: 17.58 },
+      { name: '30cm', price: 23.14 },
+      { name: '35cm', price: 24.10 },
+      { name: '38cm', price: 24.48 },
+      { name: '40cm', price: 25.06 },
+      { name: '45cm', price: 26.01 },
+      { name: '50cm', price: 26.97 },
+      { name: '55cm', price: 27.93 },
+      { name: '60cm', price: 28.89 },
+      { name: '65cm', price: 29.85 },
+      { name: '70cm', price: 30.80 },
+      { name: '80cm', price: 34.64 },
+      { name: '90cm', price: 36.55 },
+      { name: '100cm', price: 28.47 }
+    ]
+  },
+  {
+    id: 'v1',
+    title: 'MF. Ferro Chato 5/16 x 1.1/4 (Grosso)',
+    category: 'Mão Francesa',
+    img: LOCAL_PRODUCT_IMAGES['v1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '45cm', price: 24.43 },
+      { name: '50cm', price: 25.44 },
+      { name: '55cm', price: 26.45 },
+      { name: '60cm', price: 27.46 }
+    ]
+  },
+  {
+    id: 'v1_2',
+    title: 'MF. Ferro Chato 3x16 x 1.1/4 (Médio)',
+    category: 'Mão Francesa',
+    img: LOCAL_PRODUCT_IMAGES['v1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '40cm', price: 21.79 },
+      { name: '45cm', price: 22.65 },
+      { name: '50cm', price: 23.52 },
+      { name: '55cm', price: 24.39 }
+    ]
+  },
+  {
+    id: 'v1_3',
+    title: 'MF. Ferro Chato 1/8 x 1.1/4 (Fino)',
+    category: 'Mão Francesa',
+    img: LOCAL_PRODUCT_IMAGES['v1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '40cm', price: 19.29 },
+      { name: '45cm', price: 20.00 },
+      { name: '50cm', price: 20.62 },
+      { name: '55cm', price: 21.83 }
+    ]
+  },
+  // GRAPAS
+  {
+    id: 'z1',
+    title: 'Grapa Tubo 1.1/4 (Leve)',
+    category: 'Grapas',
+    img: LOCAL_PRODUCT_IMAGES['z1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '32cm', price: 12.96 },
+      { name: '42cm', price: 13.99 },
+      { name: '50cm', price: 14.81 },
+      { name: '52cm', price: 15.02 },
+      { name: '55cm', price: 15.33 },
+      { name: '58cm', price: 15.64 },
+      { name: '60cm', price: 15.84 },
+      { name: '70cm', price: 16.88 },
+      { name: '80cm', price: 17.91 }
+    ]
+  },
+  {
+    id: 'z1_2',
+    title: 'Grapa Tubo 32mm (Pesada)',
+    category: 'Grapas',
+    img: LOCAL_PRODUCT_IMAGES['z1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '50cm', price: 18.85 },
+      { name: '52cm', price: 19.18 },
+      { name: '55cm', price: 19.67 },
+      { name: '58cm', price: 20.15 },
+      { name: '60cm', price: 20.48 },
+      { name: '66cm', price: 21.46 },
+      { name: '70cm', price: 22.11 },
+      { name: '80cm', price: 23.74 }
+    ]
+  },
+  {
+    id: 'z1_3',
+    title: 'Grapa Quadrada 20x20 (Leve)',
+    category: 'Grapas',
+    img: LOCAL_PRODUCT_IMAGES['x1'] || 'https://source.unsplash.com/800x600/?product,tool',
+    sizes: [
+      { name: '25cm', price: 13.77 },
+      { name: '30cm', price: 14.16 },
+      { name: '35cm', price: 14.41 },
+      { name: '40cm', price: 14.95 },
+      { name: '45cm', price: 15.24 },
+      { name: '50cm', price: 15.63 },
+      { name: '55cm', price: 16.92 },
+      { name: '60cm', price: 16.41 },
+      { name: '65cm', price: 18.96 },
+      { name: '70cm', price: 19.64 },
+      { name: '80cm', price: 20.72 }
+    ]
+  },
+  // ADICIONAIS
+  {
+    id: 'j1',
+    title: 'Bucha Fischer SX',
+    category: 'Adicionais',
+    img: LOCAL_PRODUCT_IMAGES['j1'] || 'https://source.unsplash.com/800x600/?screw,bolt',
+    sizes: [
+      { name: '10mm', price: 0.94 },
+      { name: '8mm', price: 0.59 }
+    ]
+  },
+  {
+    id: 'h1',
+    title: 'Parafuso Sextavado',
+    category: 'Adicionais',
+    img: LOCAL_PRODUCT_IMAGES['h1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: '1/4x50', price: 0.70 },
+      { name: '1/4x60', price: 0.59 },
+      { name: '1/4x65', price: 0.62 },
+      { name: '1/4x70', price: 0.65 },
+      { name: '1/4x75', price: 0.68 },
+      { name: '5/16x50', price: 0.84 },
+      { name: '5/16x55', price: 0.85 },
+      { name: '5/16x60', price: 0.90 },
+      { name: '5/16x70', price: 1.07 },
+      { name: '5/16x75', price: 1.10 },
+      { name: '5/16x80', price: 1.15 },
+      { name: '5/16x90', price: 1.45 }
+    ]
+  },
+  {
+    id: 'e1',
+    title: 'Massa Plástica 800g',
+    category: 'Adicionais',
+    img: LOCAL_PRODUCT_IMAGES['e1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: 'Branca', price: 13.00 },
+      { name: 'Chumbar', price: 13.00 },
+      { name: 'Preta', price: 13.00 },
+      { name: 'Travertino', price: 13.00 },
+      { name: 'Verde', price: 13.00 }
+    ]
+  },
+  {
+    id: 'g1',
+    title: 'Cola P.U',
+    category: 'Adicionais',
+    img: LOCAL_PRODUCT_IMAGES['g1'] || 'https://source.unsplash.com/800x600/?easel,stand',
+    sizes: [
+      { name: 'Branco', price: 15.99 },
+      { name: 'Preto', price: 15.99 }
+    ]
+  },
+  // Mais produtos adicionados para ter todas as categorias
+  { id: 'i1', title: 'Bucha Duo Power', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['i1'], sizes: [{ name: '10mm', price: 1.29 }] },
+  { id: 'k1', title: 'IV PLAST TJ Baiano', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['k1'], sizes: [{ name: '10mm', price: 0.30 }] },
+  { id: 'a2', title: 'Suporte Varal de Teto', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['a2'], sizes: [{ name: 'Regulagem', price: 25.03 }] },
+  { id: 'b2', title: 'Cavalete de Regulagem ', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['b2'], sizes: [{ name: 'Tubo', price: 420.00 }] },
+  { id: 'c2', title: 'Cavalete de Abrir e Fechar', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['c2'], sizes: [{ name: 'Tubo', price: 168.00 }] },
+  { id: 'd2', title: 'Cavalete de Cantoneira ', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['d2'], sizes: [{ name: 'Cantoneira', price: 330.00 }] },
+  { id: 'n1', title: 'Bucha IV Plast', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['n1'], sizes: [{ name: '8mm', price: 0.10 }, { name: '10mm', price: 0.20 }, { name: '12mm', price: 0.26 }] },
+  { id: 'l1', title: 'Bucha New Fix Plast', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['l1'], sizes: [{ name: '10mm', price: 0.30 }] },
+  { id: 'm1', title: 'Bucha Fischer UX', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['m1'], sizes: [{ name: '10mm', price: 0.73 }] },
+  { id: 'o1', title: 'Bucha Argevision', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['o1'], sizes: [{ name: '10mm', price: 1.29 }] },
+  { id: 'p1', title: 'Bucha MX Nylon 10', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['p1'], sizes: [{ name: '10mm', price: 1.29 }] },
+  { id: 'q1', title: 'Chumbador Parabolt', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['q1'], sizes: [{ name: '1/4x2', price: 1.59 }, { name: '5/16x2.1/4', price: 2.22 }] },
+  { id: 'r1', title: 'Chumbador Ancora', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['r1'], sizes: [{ name: '1/4x2', price: 1.89 }, { name: '1/4x3', price: 2.22 }] },
+  { id: 's1', title: 'Kit Drywall', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['s1'], sizes: [{ name: '1/4', price: 5.03 }, { name: '3/16', price: 4.98 }] },
+  { id: 't1', title: 'Bucha MU 10', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['t1'], sizes: [{ name: '10mm', price: 1.29 }] },
+  { id: 'u1', title: 'Cantoneiras 38m', category: 'Mão Francesa', img: LOCAL_PRODUCT_IMAGES['u1'], sizes: [{ name: '05cm', price: 16.25 }, { name: '10cm', price: 16.56 }, { name: '15cm', price: 19.81 }, { name: '20cm', price: 20.97 }, { name: '25cm', price: 21.62 }, { name: '30cm', price: 22.49 }, { name: '35cm', price: 23.15 }, { name: '40cm', price: 24.01 }, { name: '45cm', price: 24.77 }, { name: '50cm', price: 25.53 }, { name: '55cm', price: 26.29 }, { name: '60cm', price: 27.06 }, { name: '65cm', price: 25.53 }, { name: '70cm', price: 26.29 }] },
+  { id: 'u1_2', title: 'Cantoneira 32mm', category: 'Mão Francesa', img: LOCAL_PRODUCT_IMAGES['u1'], sizes: [{ name: '10cm', price: 6.77 }, { name: '20cm', price: 8.29 }, { name: '25cm', price: 9.05 }, { name: '30cm', price: 9.81 }, { name: '40cm', price: 11.34 }, { name: '45cm', price: 12.46 }, { name: '50cm', price: 12.86 }, { name: '60cm', price: 14.38 }] },
+  { id: 'b1', title: ' ̶G̶r̶a̶p̶a̶s̶ ̶P̶e̶r̶f̶i̶l̶ ̶T̶ (esgotado)', category: 'Grapas', img: LOCAL_PRODUCT_IMAGES['b1'], sizes: [{ name: '05cm', price: 0.00 }] },
+  { id: 'w1', title: ' ̶M̶F̶.̶ ̶P̶e̶r̶f̶i̶l̶ ̶T̶ ̶1̶.̶1̶/̶4̶ ̶(̶M̶é̶d̶i̶o̶)̶ (esgotado)', category: 'Mão Francesa', img: LOCAL_PRODUCT_IMAGES['w1'], sizes: [{ name: '20cm', price: 0.00 }] },
+  { id: 'g1_2', title: 'Viga U para divisórias 28x28x28mm', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['g1'], sizes: [{ name: '10cm', price: 10.58 }] },
+  { id: 'x1_2', title: 'Grapa Quadrada 50x30 (Pesada)', category: 'Grapas', img: LOCAL_PRODUCT_IMAGES['x1'], sizes: [{ name: '60cm', price: 26.64 }] },
+  { id: 'x1_3', title: 'Grapa Quadrada 40x40 (Pesada)', category: 'Grapas', img: LOCAL_PRODUCT_IMAGES['x1'], sizes: [{ name: '60cm', price: 27.64 }] },
+  { id: 'g1_3', title: ' ̶M̶F̶.̶ ̶P̶e̶r̶f̶i̶l̶ ̶T̶ ̶1̶.̶1̶/̶2̶ ̶(̶G̶r̶o̶s̶s̶o̶)̶ (esgotado)', category: 'Mão Francesa', img: LOCAL_PRODUCT_IMAGES['g1'], sizes: [{ name: '40cm', price: 0.00 }] },
+  { id: 'c1', title: 'Grade Boca de Lobo', category: 'Adicionais', img: LOCAL_PRODUCT_IMAGES['c1'], sizes: [{ name: 'Personalizado', price: 0.00 }] }
+];
+// FIM DOS PRODUTOS
+
+/* =========================
+   Estado do carrinho e helpers
+   ========================= */
+
+const STORAGE_KEY = 'jfg_cart_v1';
+let cart = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+function saveCart(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); updateCartUI(); }
+
+function addToCart(productId, sizeName, price, qty=1){
+  const key = `${productId}__${sizeName}`;
+  const existing = cart.find(i => i.key === key);
+  if(existing){ existing.qty += qty; existing.price = price; }
+  else{
+    const prod = products.find(p => p.id === productId) || {title:'Produto', img:''};
+    cart.push({ key, id: productId, title: prod.title, size: sizeName, price: price, qty: qty, img: prod.img });
+  }
+  saveCart();
+}
+
+function removeFromCart(key){
+  cart = cart.filter(i => i.key !== key);
+  saveCart();
+}
+
+function changeQty(key, delta){
+  const it = cart.find(i => i.key === key);
+  if(!it) return;
+  it.qty = Math.max(0, it.qty + delta);
+  if(it.qty === 0) removeFromCart(key);
+  saveCart();
+}
+
+function cartTotals(){
+  const total = cart.reduce((s,i)=>s + (i.price * i.qty), 0);
+  const items = cart.reduce((s,i)=>s + i.qty, 0);
+  return { total, items };
+}
+
+function formatBRL(v){ return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+function escapeHtml(str) { return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
+function getProductById(id) { return products.find(p => p.id === id); }
+
+/* =========================
+   Roteamento e Visualização
+   ========================= */
+
+const app = document.getElementById('app');
+
+function renderHome(){
+  document.title = 'Home — Loja de Ferragens';
+  app.innerHTML = `
+    <section class="hero">
+      <img src="hero.gif" alt="perfil" onerror="this.src='https://source.unsplash.com/400x400/?workshop,person'">
+      <h1 style="font-size:28px;margin:6px 0 0">Bem-vindo à nossa loja</h1>
+      <p class="small" style="max-width:760px;margin:8px 0 0">Grapas e Mão Francesas — qualidade, rapidez e preços que cabem no bolso. Promoções especiais para clientes VIPs.</p>
+      <div class="cta-group" style="margin-top:14px">
+        <a href="#/sobre" class="btn btn-outline" id="goSobre">Ser VIP</a>
+        <a href="#/loja" class="btn btn-primary" id="goLoja">Acessar a loja</a>
+      </div>
+    </section>
+    <section style="margin-top:18px">
+      <h3>Destaques</h3>
+      <div class="grid" id="featuredGrid"></div>
+    </section>
+    <section style="background: linear-gradient(90deg, #F97316, #FB923C); border-radius: 12px; padding: 36px 20px; color: #fff; text-align: center; margin: 40px 0;">
+      <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 12px;">
+        Aproveite Nossas Ofertas Exclusivas!
+      </h2>
+      <p style="font-size: 16px; margin-bottom: 20px;">
+        Produtos de qualidade direta da fábrica com preços imperdíveis.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+        <a href="#/loja" style="padding: 10px 16px; border-radius: 12px; background: #fff; color: #F97316; font-weight: 700; border: none; cursor: pointer; text-decoration:none;">Ver Produtos</a>
+        <a href="#/sobre" style="padding: 10px 16px; border-radius: 12px; background: transparent; color: #fff; font-weight: 700; border: 2px solid #fff; cursor: pointer; text-decoration:none;">Saiba Mais</a>
+      </div>
+    </section>
+    <section style="padding:40px 20px; max-width:800px; margin:0 auto;">
+      <h2 style="font-size:28px; font-weight:700; text-align:center; margin-bottom:24px;">
+        Perguntas Frequentes
+      </h2>
+      <div style="margin-bottom:16px; border-bottom:1px solid #e6e6e6; padding-bottom:12px;">
+        <button onclick="toggleFAQ(0)" style="width:100%; text-align:left; background:none; border:none; font-size:18px; font-weight:600; cursor:pointer; color:#F97316;">
+          Como faço para comprar?
+        </button>
+        <div id="faq-answer-0" style="display:none; margin-top:8px; font-size:16px; color:#333;">
+          Basta escolher o produto, selecionar o tamanho/quantidade e clicar em 'Adicionar ao Carrinho'.
+        </div>
+      </div>
+      <div style="margin-bottom:16px; border-bottom:1px solid #e6e6e6; padding-bottom:12px;">
+        <button onclick="toggleFAQ(1)" style="width:100%; text-align:left; background:none; border:none; font-size:18px; font-weight:600; cursor:pointer; color:#F97316;">
+          Quais formas de pagamento vocês aceitam?
+        </button>
+        <div id="faq-answer-1" style="display:none; margin-top:8px; font-size:16px; color:#333;">
+          Aceitamos Pix, cartão de crédito, boleto e transferência bancária.
+        </div>
+      </div>
+      <div style="margin-bottom:16px; border-bottom:1px solid #e6e6e6; padding-bottom:12px;">
+        <button onclick="toggleFAQ(2)" style="width:100%; text-align:left; background:none; border:none; font-size:18px; font-weight:600; cursor:pointer; color:#F97316;">
+          Quanto tempo demora a entrega?
+        </button>
+        <div id="faq-answer-2" style="display:none; margin-top:8px; font-size:16px; color:#333;">
+          O prazo de entrega varia de acordo com sua cidade, geralmente de 3 a 7 dias úteis.
+        </div>
+      </div>
+      <div style="margin-bottom:16px; border-bottom:1px solid #e6e6e6; padding-bottom:12px;">
+        <button onclick="toggleFAQ(3)" style="width:100%; text-align:left; background:none; border:none; font-size:18px; font-weight:600; cursor:pointer; color:#F97316;">
+          Posso trocar ou devolver um produto?
+        </button>
+        <div id="faq-answer-3" style="display:none; margin-top:8px; font-size:16px; color:#333;">
+          Sim, você tem até 7 dias após o recebimento para solicitar troca ou devolução.
+        </div>
+      </div>
+    </section>
+  `;
+
+  // popular destaques (3 primeiros)
+  const fg = document.getElementById('featuredGrid');
+  fg.innerHTML = '';
+  products.slice(0,3).forEach(p=>{
+    const card = document.createElement('div'); card.className = 'card';
+    const firstSize = p.sizes[0];
+    const isEsgotado = p.title.includes('esgotado') || firstSize.price === 0;
+
+    card.innerHTML = `
+      <img src="${p.img}" alt="${escapeHtml(p.title)}" onerror="this.src='https://source.unsplash.com/800x600/?hardware'">
+      <div style="font-weight:700;margin-top:8px">${escapeHtml(p.title)}</div>
+      <div class="price">${isEsgotado ? 'Esgotado' : formatBRL(firstSize.price)}</div>
+      <div class="actions">
+        <button class="btn btn-outline" data-open="${p.id}">Detalhes</button>
+        <button class="btn btn-primary" data-add="${p.id}" data-size="${firstSize.name}" data-price="${firstSize.price}" ${isEsgotado ? 'disabled' : ''} style="${isEsgotado ? 'background:#ccc;cursor:not-allowed' : ''}">Adicionar</button>
+      </div>
+    `;
+    fg.appendChild(card);
+  });
+}
+
+// ** FUNÇÃO DE RENDERIZAÇÃO DA LOJA ATUALIZADA COM NOVO VISUAL **
+let currentFilter = 'todos';
+let currentSearch = '';
+
+function renderLoja(){
+  document.title = 'Loja — Loja de Ferragens';
+  app.innerHTML = `
+    <h1 style="font-size:28px;margin:6px 0 0;text-align:center">Nossos Produtos</h1>
+    <p class="small center">Selecione o produto para ver os tamanhos/opções e adicionar ao carrinho.</p>
+    
+    <div class="shop-controls">
+        <div class="search-container">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="search-input" placeholder="Pesquisar por nome..." value="${currentSearch}">
+        </div>
+        <select id="filter-select">
+            <option value="todos">Filtrar: Todos</option>
+            <option value="Mão Francesa">Mão Francesa</option>
+            <option value="Grapas">Grapas</option>
+            <option value="Adicionais">Adicionais</option>
+        </select>
+    </div>
+
+    <div class="grid" id="productsGrid"></div>
+  `;
+
+  // Define os valores atuais do filtro e pesquisa
+  document.getElementById('filter-select').value = currentFilter;
+
+  // Adiciona listeners para pesquisa e filtro
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    currentSearch = e.target.value.toLowerCase();
+    filterAndRenderProducts();
+  });
+
+  document.getElementById('filter-select').addEventListener('change', (e) => {
+    currentFilter = e.target.value;
+    filterAndRenderProducts();
+  });
+  
+  // Chama a função de filtro inicial
+  filterAndRenderProducts();
+}
+
+function filterAndRenderProducts() {
+    const pg = document.getElementById('productsGrid');
+    if(!pg) return;
+
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(currentSearch);
+        const matchesFilter = currentFilter === 'todos' || p.category === currentFilter;
+        return matchesSearch && matchesFilter;
+    });
+
+    pg.innerHTML = '';
+    
+    if (filteredProducts.length === 0) {
+      pg.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--muted);">Nenhum produto encontrado com os filtros e pesquisa aplicados.</p>`;
+      return;
+    }
+
+    filteredProducts.forEach(p=>{
+      const card = document.createElement('div'); card.className = 'card';
+      const firstSize = p.sizes[0];
+      const isEsgotado = p.title.includes('esgotado') || firstSize.price === 0;
+      const categoryTag = `<span class="small muted" style="display:block;margin-top:2px;">${escapeHtml(p.category || 'Outros')}</span>`;
+
+      card.innerHTML = `
+        <img src="${p.img}" alt="${escapeHtml(p.title)}" onerror="this.src='https://source.unsplash.com/800x600/?hardware'">
+        <div style="font-weight:700;margin-top:8px;${isEsgotado ? 'text-decoration:line-through;color:var(--muted)' : ''}">${escapeHtml(p.title)}</div>
+        ${categoryTag}
+        <div class="price">${isEsgotado ? 'Indisponível' : formatBRL(firstSize.price)}</div>
+        <div class="actions">
+          <button class="btn btn-outline" data-open="${p.id}">Detalhes</button>
+          <button class="btn btn-primary" data-add="${p.id}" data-size="${firstSize.name}" data-price="${firstSize.price}" ${isEsgotado ? 'disabled' : ''} style="${isEsgotado ? 'background:#ccc;cursor:not-allowed' : ''}">Adicionar</button>
+        </div>
+      `;
+      pg.appendChild(card);
+    });
+}
+// FIM DA FUNÇÃO DE RENDERIZAÇÃO DA LOJA ATUALIZADA
+
+function renderBlog(){
+  document.title = 'Blog — Loja de Ferragens';
+  app.innerHTML = `
+    <h1 style="font-size:28px;margin:6px 0 0;text-align:center">Dicas e Novidades (Blog)</h1>
+    <div style="max-width:800px;margin:20px auto;display:grid;gap:20px">
+      <div class="card" style="padding:20px">
+        <h3 style="margin-top:0">Como escolher a Mão Francesa ideal</h3>
+        <p class="muted">Explicamos as diferenças entre os modelos e materiais para sua prateleira.</p>
+        <a href="#" style="color:var(--orange);font-weight:600;text-decoration:none">Continuar lendo →</a>
+      </div>
+      <div class="card" style="padding:20px">
+        <h3 style="margin-top:0">Onde usar a Grapa no seu projeto</h3>
+        <p class="muted">Detalhes sobre os tipos de grapa e as melhores aplicações para fixação.</p>
+        <a href="#" style="color:var(--orange);font-weight:600;text-decoration:none">Continuar lendo →</a>
+      </div>
+      <div class="card" style="padding:20px">
+        <h3 style="margin-top:0">Guia de buchas e parafusos</h3>
+        <p class="muted">Entenda qual o melhor kit de fixação para cada tipo de parede.</p>
+        <a href="#" style="color:var(--orange);font-weight:600;text-decoration:none">Continuar lendo →</a>
+      </div>
+    </div>
+  `;
+}
+
+function renderSobre(){
+  document.title = 'Sobre — Loja de Ferragens';
+  app.innerHTML = `
+    <section style="max-width:800px;margin:0 auto;text-align:center">
+      <h1 style="font-size:28px;margin:6px 0 0">Sobre a JFG Metais</h1>
+      <p class="muted">Qualidade, Confiança e Preço Justo.</p>
+      <div style="margin-top:30px;text-align:left;line-height:1.7">
+        <p>Desde a nossa fundação, a **JFG Metais** se dedica a fornecer produtos de fixação de alta qualidade, como grapas e mão francesas, diretamente da fábrica para você. Nossa missão é ser o parceiro de confiança de construtores, marceneiros e entusiastas do "faça você mesmo".</p>
+        <h3 style="margin-top:24px">Nosso Compromisso:</h3>
+        <ul>
+          <li>**Excelência no Produto:** Utilizamos as melhores matérias-primas e processos de fabricação.</li>
+          <li>**Preços Competitivos:** Nossa operação direta garante os melhores preços do mercado.</li>
+          <li>**Atendimento ao Cliente:** Nossa equipe está sempre pronta para ajudar a encontrar a solução ideal.</li>
+        </ul>
+        <div style="margin-top:30px;text-align:center">
+          <a href="#/loja" class="btn btn-primary" style="text-decoration:none">Conheça Nossos Produtos</a>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderTrabalhe(){
+  document.title = 'Trabalhe Conosco — Loja de Ferragens';
+  app.innerHTML = `
+    <section style="max-width:600px;margin:0 auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 6px 14px rgba(2,6,23,0.03);">
+      <h1 style="font-size:28px;margin:6px 0 0;text-align:center">Trabalhe Conosco</h1>
+      <p class="muted center">Envie seu currículo ou preencha o formulário para fazer parte da equipe JFG.</p>
+      <form id="contactForm" style="display:flex;flex-direction:column;gap:12px;margin-top:20px" autocomplete="off">
+        <label>Nome Completo:</label>
+        <input type="text" name="user_name" required>
+        
+        <label>E-mail:</label>
+        <input type="email" name="user_email" required>
+        
+        <label>Mensagem / Cargo de Interesse:</label>
+        <textarea name="message" rows="4" required></textarea>
+        
+        <label>Anexar Currículo (.pdf ou .doc):</label>
+        <input type="file" name="user_cv" accept=".pdf,.doc,.docx">
+        
+        <button type="submit" class="btn btn-primary" style="margin-top:10px" id="submitBtn">Enviar Candidatura</button>
+        <div id="formStatus" style="margin-top:10px;text-align:center;font-weight:600"></div>
+      </form>
+    </section>
+  `;
+  
+  if (EMAILJS_ENABLED) {
+    document.getElementById('contactForm').addEventListener('submit', handleFormSubmit);
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  } else {
+     document.getElementById('contactForm').innerHTML = `
+        <p class="center" style="font-weight:700">O envio do formulário está desativado (EmailJS). Para se candidatar, entre em contato pelo WhatsApp: ${WA_NUMBER}.</p>
+     `;
+  }
+}
+
+// Handler de formulário para EmailJS
+function handleFormSubmit(event) {
+  event.preventDefault();
+  const form = event.target;
+  const statusEl = document.getElementById('formStatus');
+  const submitBtn = document.getElementById('submitBtn');
+
+  submitBtn.disabled = true;
+  statusEl.textContent = 'Enviando...';
+  statusEl.style.color = '#F97316';
+
+  emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form)
+    .then((response) => {
+      statusEl.textContent = 'Candidatura enviada com sucesso! Em breve entraremos em contato.';
+      statusEl.style.color = '#10B981'; // Green
+      form.reset();
+      submitBtn.disabled = false;
+    }, (error) => {
+      console.error('EmailJS Error:', error);
+      statusEl.textContent = 'Erro ao enviar. Tente novamente ou use o WhatsApp.';
+      statusEl.style.color = '#EF4444'; // Red
+      submitBtn.disabled = false;
+    });
+}
+
+
+/* =========================
+   Popup de Detalhes do Produto (Modal)
+   ========================= */
+
+let currentModalProduct = null;
+let currentModalQty = 1;
+let currentModalSize = null;
+
+function closeModal(){
+  const ov = document.getElementById('product-modal-overlay');
+  if(ov) ov.remove();
+  currentModalProduct = null;
+  currentModalSize = null;
+  currentModalQty = 1;
+}
+
+function updateModalQty(delta, event) {
+  if (event) {
+      event.stopPropagation();
+      event.preventDefault(); 
+  }
+  
+  currentModalQty = Math.max(1, currentModalQty + delta);
+  const qtyEl = document.getElementById('modal-qty-input');
+  if(qtyEl) qtyEl.value = currentModalQty;
+  updateModalTotal();
+}
+
+function updateModalTotal() {
+  if (!currentModalProduct || !currentModalSize) return;
+
+  const size = currentModalProduct.sizes.find(s => s.name === currentModalSize);
+  const total = (size.price * currentModalQty) || 0;
+  
+  const totalEl = document.getElementById('modal-total');
+  if(totalEl) totalEl.textContent = formatBRL(total);
+
+  const priceEl = document.getElementById('modal-price');
+  if(priceEl) priceEl.textContent = formatBRL(size.price);
+
+  const addBtn = document.getElementById('modal-add-btn');
+  if(addBtn) {
+    if (size.price === 0) {
+      addBtn.textContent = 'Indisponível';
+      addBtn.disabled = true;
+      addBtn.style.background = '#ccc';
+      addBtn.style.cursor = 'not-allowed';
+    } else {
+      addBtn.textContent = `Adicionar ${currentModalQty} un. ao carrinho`;
+      addBtn.disabled = false;
+      addBtn.style.background = 'var(--orange)';
+      addBtn.style.cursor = 'pointer';
+    }
+  }
+}
+
+function setupQuantityControls() {
+  const minusBtn = document.getElementById('modal-qty-minus');
+  const plusBtn = document.getElementById('modal-qty-plus');
+
+  if (minusBtn) {
+    minusBtn.addEventListener('click', (e) => updateModalQty(-1, e));
+    minusBtn.addEventListener('mousedown', (e) => e.preventDefault());
+  }
+
+  if (plusBtn) {
+    plusBtn.addEventListener('click', (e) => updateModalQty(1, e));
+    plusBtn.addEventListener('mousedown', (e) => e.preventDefault());
+  }
+}
+
+
+function renderProductModal(productId) {
+  currentModalProduct = getProductById(productId);
+  if (!currentModalProduct) return;
+
+  currentModalQty = 1;
+  currentModalSize = currentModalProduct.sizes[0].name;
+
+  const overlays = document.getElementById('overlays');
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.id = 'product-modal-overlay';
+  overlay.onclick = (e) => {
+    if (e.target.id === 'product-modal-overlay') {
+      closeModal();
+    }
+  };
+
+  const modalHtml = `
+    <div class="modal">
+      <img src="${currentModalProduct.img}" alt="${escapeHtml(currentModalProduct.title)}" onerror="this.src='https://source.unsplash.com/400x400/?hardware'">
+      <div style="flex:1">
+        <h2 style="margin:0 0 10px">${escapeHtml(currentModalProduct.title)}</h2>
+        <p class="muted">Detalhes do produto e opções de tamanho:</p>
+        
+        <div style="margin-bottom:12px">
+          <label for="size-select" style="font-weight:600">Tamanho/Opção:</label>
+          <select id="size-select" style="width:100%;margin-top:4px;border-radius:8px">
+            ${currentModalProduct.sizes.map(s => `<option value="${s.name}" data-price="${s.price}">${s.name} (${formatBRL(s.price)})</option>`).join('')}
+          </select>
+        </div>
+        
+        <div style="margin-bottom:12px">
+          <span style="font-weight:600">Preço Unitário:</span> <span id="modal-price" style="color:var(--orange);font-weight:700">${formatBRL(currentModalProduct.sizes[0].price)}</span>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <span style="font-weight:600">Quantidade:</span>
+          <div class="qty-control">
+            <button class="qty-btn" id="modal-qty-minus" data-delta="-1" type="button" aria-label="Diminuir quantidade">–</button>
+            <input type="text" id="modal-qty-input" value="1" readonly class="qty-number" aria-label="Quantidade atual">
+            <button class="qty-btn" id="modal-qty-plus" data-delta="1" type="button" aria-label="Aumentar quantidade">+</button>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding-top:12px;border-top:1px solid #eee">
+          <span style="font-weight:600;font-size:1.1em">Total Estimado:</span> <span id="modal-total" style="color:#111827;font-weight:800;font-size:1.3em">${formatBRL(currentModalProduct.sizes[0].price * 1)}</span>
+        </div>
+
+        <div class="cart-actions" style="margin-top:20px">
+          <button class="btn btn-primary" id="modal-add-btn">Adicionar 1 un. ao carrinho</button>
+          <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  `;
+  overlay.innerHTML = modalHtml;
+  overlays.appendChild(overlay);
+
+  // Setup listeners
+  setupQuantityControls();
+
+  const sizeSelect = document.getElementById('size-select');
+  sizeSelect.addEventListener('change', (e) => {
+    currentModalSize = e.target.value;
+    currentModalQty = 1; // Reseta a quantidade ao mudar o tamanho
+    document.getElementById('modal-qty-input').value = 1;
+    updateModalTotal();
+  });
+  
+  document.getElementById('modal-add-btn').addEventListener('click', () => {
+    const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+    const price = parseFloat(selectedOption.dataset.price);
+    const sizeName = selectedOption.value;
+    
+    if (price > 0) {
+      addToCart(productId, sizeName, price, currentModalQty);
+      closeModal();
+      toggleCartPanel(true); // Abre o carrinho para mostrar o item adicionado
+    }
+  });
+
+  updateModalTotal(); 
+}
+
+/* =========================
+   Carrinho Flutuante (Panel)
+   ========================= */
+
+let isCartPanelOpen = false;
+
+function toggleCartPanel(forceState){
+  isCartPanelOpen = (forceState !== undefined) ? forceState : !isCartPanelOpen;
+  
+  const overlays = document.getElementById('overlays');
+  let panelOverlay = document.getElementById('cart-panel-overlay');
+
+  if(isCartPanelOpen){
+    if(!panelOverlay){
+      panelOverlay = document.createElement('div');
+      panelOverlay.className = 'overlay';
+      panelOverlay.id = 'cart-panel-overlay';
+      panelOverlay.style.background = 'transparent'; // Fundo transparente para não cobrir a loja
+      panelOverlay.style.alignItems = 'flex-end';
+      panelOverlay.style.justifyContent = 'flex-end';
+      panelOverlay.style.padding = '18px';
+      panelOverlay.onclick = (e) => {
+        // Fecha se clicar no fundo transparente
+        if (e.target.id === 'cart-panel-overlay') {
+          toggleCartPanel(false);
+        }
+      };
+      overlays.appendChild(panelOverlay);
+    }
+    renderCartPanel(panelOverlay);
+    panelOverlay.style.display = 'flex';
+  } else {
+    if(panelOverlay) panelOverlay.remove();
+  }
+}
+
+function renderCartPanel(panelOverlay) {
+  const { total, items } = cartTotals();
+
+  if (items === 0) {
+    panelOverlay.innerHTML = `
+      <div class="cart-panel" onclick="event.stopPropagation()">
+        <h3 style="margin:0 0 10px">Seu Carrinho</h3>
+        <p class="center muted">Seu carrinho está vazio.</p>
+        <button class="btn btn-primary" onclick="toggleCartPanel(false)">Continuar Comprando</button>
+      </div>
+    `;
+    return;
+  }
+
+  const itemsHtml = cart.map(item => {
+    const prod = getProductById(item.id) || {title: item.title, img: item.img};
+    return `
+      <div class="cart-item" data-key="${item.key}">
+        <img src="${prod.img}" alt="${escapeHtml(item.title)} - ${escapeHtml(item.size)}" onerror="this.src='https://source.unsplash.com/56x56/?hardware'">
+        <div style="flex:1; line-height:1.2">
+          <div style="font-weight:600">${escapeHtml(item.title)}</div>
+          <div class="small muted">${escapeHtml(item.size)} - ${formatBRL(item.price)}</div>
+          <div style="font-weight:700;margin-top:2px">${formatBRL(item.price * item.qty)}</div>
+        </div>
+        <div class="qty-control" style="margin-top:0">
+          <button class="qty-btn" data-delta="minus" type="button" aria-label="Diminuir quantidade">–</button>
+          <div class="qty-number">${item.qty}</div>
+          <button class="qty-btn" data-delta="plus" type="button" aria-label="Aumentar quantidade">+</button>
+        </div>
+        <button class="remove-ghost" data-key="${item.key}" aria-label="Remover item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  panelOverlay.innerHTML = `
+    <div class="cart-panel" id="cartPanelContent" onclick="event.stopPropagation()">
+      <h3 style="margin:0 0 10px">Seu Carrinho (${items} itens)</h3>
+      <div style="max-height:300px;overflow-y:auto;margin-bottom:10px">${itemsHtml}</div>
+      <div style="border-top:1px solid #eee;padding-top:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-weight:700">Total:</span>
+        <span style="font-weight:800;color:var(--orange);font-size:1.4em">${formatBRL(total)}</span>
+      </div>
+      <button class="btn btn-primary" id="checkout-btn" style="width:100%">Finalizar Pedido (WhatsApp)</button>
+    </div>
+  `;
+
+  // Adiciona listeners para alterar quantidade e remover item no painel do carrinho
+  document.querySelectorAll('#cartPanelContent .qty-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation(); 
+      const key = this.closest('.cart-item').dataset.key;
+      const delta = this.dataset.delta === 'plus' ? 1 : -1;
+      changeQty(key, delta);
+    });
+    btn.addEventListener('mousedown', (e) => e.preventDefault());
+  });
+
+  document.querySelectorAll('#cartPanelContent .remove-ghost').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation(); 
+      removeFromCart(this.dataset.key);
+    });
+  });
+
+  document.getElementById('checkout-btn').addEventListener('click', sendOrderViaWhatsApp);
+}
+
+function updateCartUI() {
+  const { total, items } = cartTotals();
+  document.getElementById('cart-count').textContent = items;
+  document.getElementById('cart-summary').textContent = `${items} ${items === 1 ? 'item' : 'itens'} — ${formatBRL(total)}`;
+
+  // Re-renderiza o painel se estiver aberto
+  if(isCartPanelOpen){
+    const panelOverlay = document.getElementById('cart-panel-overlay');
+    if(panelOverlay) renderCartPanel(panelOverlay);
+  }
+}
+
+function sendOrderViaWhatsApp(){
+  const { total } = cartTotals();
+  let message = `*NOVO PEDIDO - JFG METAIS*\n\n`;
+  message += `Itens do pedido:\n`;
+
+  cart.forEach((item, index) => {
+    const lineTotal = item.price * item.qty;
+    message += `${index + 1}. ${item.qty}x ${item.title} (${item.size}) - ${formatBRL(lineTotal)}\n`;
+  });
+
+  message += `\n*Total do Pedido: ${formatBRL(total)}*\n\n`;
+  message += `Olá, gostaria de finalizar este pedido. Por favor, me informe o valor do frete e os dados para pagamento.\n`;
+  message += `[Meu nome: ]\n[Meu endereço: ]`;
+
+  const encodedMessage = encodeURIComponent(message);
+  const waUrl = `https://api.whatsapp.com/send?phone=${WA_NUMBER}&text=${encodedMessage}`;
+  
+  window.open(waUrl, '_blank');
+  toggleCartPanel(false);
+}
+
+
+/* =========================
+   Eventos Gerais e Inicialização
+   ========================= */
+
+// Roteamento
+function navigateTo(route){
+  window.location.hash = route;
+  updateActiveNav(route);
+}
+
+function router(){
+  const hash = window.location.hash || '#/';
+  const route = hash.substring(1);
+
+  if(route.startsWith('/loja/')){
+     const productId = route.substring(6);
+     if(!getProductById(productId)){
+        navigateTo('/loja'); 
+        return;
+     }
+  }
+
+  switch(route){
+    case '/': renderHome(); break;
+    case '/loja': renderLoja(); break;
+    case '/blog': renderBlog(); break;
+    case '/sobre': renderSobre(); break;
+    case '/trabalhe': renderTrabalhe(); break;
+    default: renderHome(); navigateTo('/'); break;
+  }
+}
+
+function updateActiveNav(currentRoute) {
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.dataset.route === currentRoute) {
+      link.classList.add('active');
+    }
+  });
+}
+
+function toggleFAQ(index) {
+  const answer = document.getElementById(`faq-answer-${index}`);
+  if (answer.style.display === 'none' || answer.style.display === '') {
+    answer.style.display = 'block';
+  } else {
+    answer.style.display = 'none';
+  }
+}
+
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('year').textContent = new Date().getFullYear();
+  
+  // Roteamento
+  window.addEventListener('hashchange', router);
+  document.getElementById('home-link').addEventListener('click', () => navigateTo('/'));
+  router(); // Chama na primeira carga
+  
+  // Carrinho
+  updateCartUI();
+  document.getElementById('cart-btn').addEventListener('click', () => toggleCartPanel());
+
+  // Lógica de abertura do modal (delegada para o app/main)
+  document.getElementById('app').addEventListener('click', (e) => {
+    if (e.target.dataset.open) {
+      renderProductModal(e.target.dataset.open);
+    } else if (e.target.dataset.add) {
+      const { add: productId, size, price } = e.target.dataset;
+      addToCart(productId, size, parseFloat(price), 1);
+      toggleCartPanel(true); // Abre o carrinho
+    }
+  });
+  
+  // Navegação mobile
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    mobileNav.classList.toggle('open');
+  });
+  mobileNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      mobileNav.classList.remove('open');
+    });
+  });
+});
+</script>
+</body>
+</html>
